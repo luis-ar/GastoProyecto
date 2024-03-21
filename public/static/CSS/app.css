@@ -1,0 +1,13 @@
+.listado-productos {
+  background-color: var(--contCard);
+}
+.contenedor {
+  max-width: 1200px;
+  width: 95%;
+  padding: 10px 0;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+.bg-white {
+  background-color: #fff;
+}
