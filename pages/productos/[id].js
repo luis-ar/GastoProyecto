@@ -1395,7 +1395,7 @@ const Producto = () => {
               </div>
               <div>
                 <Precio>{formatearPresupuesto(parseFloat(precio))}</Precio>
-                {esCreador(usuario.uid) && (
+                {usuario != undefined && esCreador(usuario.uid) && (
                   <button
                     css={css`
                       background-color: var(--botones);
