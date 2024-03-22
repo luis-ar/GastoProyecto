@@ -2040,7 +2040,7 @@ const Producto = () => {
                                               inversor.imagenComprobante
                                             ) != "pdf" ? (
                                               <img
-                                                id="imagenComprobante"
+                                                id={`${inversor.id}`}
                                                 src={inversor.imagenComprobante}
                                                 style={{
                                                   width: "98%",
@@ -2049,7 +2049,7 @@ const Producto = () => {
                                               />
                                             ) : (
                                               <iframe
-                                                id="imagenComprobante"
+                                                id={`${inversor.id}`}
                                                 src={inversor.imagenComprobante}
                                                 style={{
                                                   width: "100%",
@@ -2059,7 +2059,7 @@ const Producto = () => {
                                             )}
 
                                             <button
-                                              id="imagenComprobante"
+                                              id={`${inversor.id}`}
                                               onClick={Expandir}
                                               css={css`
                                                 height: 30px;
@@ -2081,7 +2081,7 @@ const Producto = () => {
                                               inversor.imagenDeposito
                                             ) != "pdf" ? (
                                               <img
-                                                id="imagenComprobante"
+                                                id={`${inversor.id}a`}
                                                 src={inversor.imagenDeposito}
                                                 style={{
                                                   width: "98%",
@@ -2090,7 +2090,7 @@ const Producto = () => {
                                               />
                                             ) : (
                                               <iframe
-                                                id="imagenComprobante"
+                                                id={`${inversor.id}a`}
                                                 src={inversor.imagenDeposito}
                                                 style={{
                                                   width: "100%",
@@ -2099,7 +2099,7 @@ const Producto = () => {
                                               />
                                             )}
                                             <button
-                                              id="pdfViewer"
+                                              id={`${inversor.id}a`}
                                               onClick={Expandir}
                                               css={css`
                                                 height: 30px;
@@ -2352,7 +2352,7 @@ const Producto = () => {
                                           inversor.imagenComprobante
                                         ) != "pdf" ? (
                                           <img
-                                            id="imagenComprobante"
+                                            id={`${inversor.id}`}
                                             src={inversor.imagenComprobante}
                                             style={{
                                               width: "98%",
@@ -2361,7 +2361,7 @@ const Producto = () => {
                                           />
                                         ) : (
                                           <iframe
-                                            id="imagenComprobante"
+                                            id={`${inversor.id}`}
                                             src={inversor.imagenComprobante}
                                             style={{
                                               width: "100%",
@@ -2371,7 +2371,7 @@ const Producto = () => {
                                         )}
 
                                         <button
-                                          id="imagenComprobante"
+                                          id={`${inversor.id}`}
                                           onClick={Expandir}
                                           css={css`
                                             height: 30px;
@@ -2392,7 +2392,7 @@ const Producto = () => {
                                         {TipoArchivo(inversor.imagenDeposito) !=
                                         "pdf" ? (
                                           <img
-                                            id="imagenComprobante"
+                                            id={`${inversor.id}a`}
                                             src={inversor.imagenDeposito}
                                             style={{
                                               width: "98%",
@@ -2401,7 +2401,7 @@ const Producto = () => {
                                           />
                                         ) : (
                                           <iframe
-                                            id="imagenComprobante"
+                                            id={`${inversor.id}a`}
                                             src={inversor.imagenDeposito}
                                             style={{
                                               width: "100%",
@@ -2410,7 +2410,7 @@ const Producto = () => {
                                           />
                                         )}
                                         <button
-                                          id="pdfViewer"
+                                          id={`${inversor.id}a`}
                                           onClick={Expandir}
                                           css={css`
                                             height: 30px;
