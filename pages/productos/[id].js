@@ -452,6 +452,8 @@ const Producto = () => {
   const [editarInversion, setEditarInversion] = useState(true);
   const [IDEncontrado, setIDEncontrado] = useState("");
   const [depositarRecaudado, setDepositarRecaudado] = useState(false);
+  //FILTRO BUSQUEDA
+  const [filtro, setFiltro] = useState("");
 
   //mensaje error
   const [mensaje, setMensaje] = useState("");
@@ -1158,6 +1160,19 @@ const Producto = () => {
     }
   };
 
+  const handleFiltroChange = (event) => {
+    setFiltro(event.target.value);
+  };
+
+  const gastosFiltrados = inversores.filter(
+    (gasto) =>
+      gasto.descripcion.toLowerCase().includes(filtro.toLowerCase()) ||
+      gasto.categoria.toLowerCase().includes(filtro.toLowerCase()) ||
+      gasto.comprobante.toLowerCase().includes(filtro.toLowerCase()) ||
+      gasto.nombreInversor.toLowerCase().includes(filtro.toLowerCase()) ||
+      gasto.usuarioNombre.toLowerCase().includes(filtro.toLowerCase())
+  );
+
   return (
     <Layout>
       <>
@@ -1768,6 +1783,39 @@ const Producto = () => {
                       >
                         Lista de Gastos{" "}
                       </p>
+                      {/* Barra de búsqueda */}
+                      <div
+                        css={css`
+                          position: relative;
+                          margin-bottom: 15px;
+                        `}
+                      >
+                        <input
+                          value={filtro}
+                          onChange={handleFiltroChange}
+                          type="text"
+                          placeholder="Buscar gastos..."
+                          css={css`
+                            width: 100%;
+                            background-color: #1b1b1b;
+                            padding: 10px;
+                            color: white;
+                            padding-right: 50px;
+                            border: none;
+                          `}
+                        />
+                        <i
+                          className="bx bx-search-alt-2"
+                          css={css`
+                            position: absolute;
+                            right: 10px;
+                            color: white;
+                            top: 7px;
+                            font-size: 30px;
+                          `}
+                        ></i>
+                      </div>
+
                       <ul
                         css={css`
                           .swipe-action__leading {
@@ -1792,7 +1840,7 @@ const Producto = () => {
                         `}
                       >
                         {inversores &&
-                          inversores.map((inversor, i) => (
+                          gastosFiltrados.map((inversor, i) => (
                             <div>
                               {esCreadorInversor(inversor.usuarioId) &&
                               estado ? (
