@@ -39,6 +39,34 @@ import enviarGanancia from "@/Validacion/enviarGanancia";
 import { ref, getDownloadURL, uploadBytesResumable } from "@firebase/storage";
 //GENERADOR DE ID PARA LOS GASTOS
 import { v4 as uuidv4 } from "uuid";
+//contenedor imagenes
+
+const ContenedorImagenes = styled.div`
+  width: 100%;
+  height: 220px;
+  display: flex;
+  margin-top: 10px;
+  border: solid 1px white;
+  div {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    .tituloEntrada {
+      background-color: #454546;
+      width: 100%;
+      text-align: center;
+      height: 40px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-transform: uppercase;
+    }
+    .tipoImagen {
+      width: 100%;
+    }
+  }
+`;
 
 const ContenedorProducto = styled.div`
   display: grid;
@@ -58,7 +86,7 @@ const CreadorProducto = styled.p`
   display: inline-block;
   text-align: center;
   position: absolute;
-  bottom: 25px;
+  top: 25px;
   right: 5px;
   @media (max-width: 550px) {
     top: 15px;
@@ -217,7 +245,7 @@ const Publicado = styled.p`
 `;
 const ListaComentario = styled.li`
   display: grid;
-  grid-template-columns: 0.5fr 5fr;
+  /* grid-template-columns: 0.5fr 5fr; */
   .contenedorPerfil {
     display: flex;
     align-items: center;
@@ -850,10 +878,12 @@ const Producto = () => {
 
         if (imagenComprobante != "") {
           nuevosCampos.imagenComprobante = imagenComprobante;
+          console.log("entro cambio de comprobante");
         }
 
         if (imagenDeposito != "") {
           nuevosCampos.imagenDeposito = imagenDeposito;
+          console.log("entro cambio de deposito");
         }
 
         const indice = inversores.findIndex(
@@ -1097,6 +1127,37 @@ const Producto = () => {
       }
     );
   };
+
+  const TipoArchivo = (url) => {
+    // Obtener el nombre del archivo de la URL
+    const nombreArchivoConQuery = url.substring(url.lastIndexOf("/") + 1);
+
+    // Eliminar cualquier parámetro de consulta de la URL
+    const nombreArchivo = nombreArchivoConQuery.split("?")[0];
+
+    // Obtener la extensión del archivo
+    const puntoAntesDeExtension = nombreArchivo.lastIndexOf(".");
+    const extension =
+      puntoAntesDeExtension === -1
+        ? ""
+        : nombreArchivo.substring(puntoAntesDeExtension + 1);
+    return extension;
+  };
+
+  const Expandir = (e) => {
+    var elem = document.getElementById(e.target.id);
+    console.log(e);
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      /* IE11 */
+      elem.msRequestFullscreen();
+    }
+  };
+
   return (
     <Layout>
       <>
@@ -1771,188 +1832,284 @@ const Producto = () => {
                                           Tu Gasto
                                         </CreadorProducto>
                                       )}
-                                      <div className="contenedorPerfil">
-                                        <img
-                                          src={
-                                            inversor.icono != null
-                                              ? inversor.icono
-                                              : "/static/img/imagenPerfil.png"
-                                          }
-                                        />
-                                      </div>
-
                                       <div
                                         css={css`
-                                          margin-left: 10px;
-                                          display: grid;
-                                          grid-template-columns: 1fr 1fr;
-                                          @media (max-width: 550px) {
-                                            display: flex;
-                                            flex-direction: column;
-                                          }
+                                          display: flex;
+                                          width: 100%;
                                         `}
                                       >
-                                        <div>
-                                          <p>
-                                            Titular:
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""} {inversor.usuarioNombre}
-                                            </span>
-                                          </p>
-                                          <p>
-                                            Inversor:
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""} {inversor.nombreInversor}
-                                            </span>
-                                          </p>
-
-                                          <p>
-                                            Descripción:
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""} {inversor.descripcion}
-                                            </span>
-                                          </p>
-
-                                          <p>
-                                            Categoria:
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""} {inversor.categoria}
-                                            </span>
-                                          </p>
-                                          <p>
-                                            Comprobante:
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""} {inversor.comprobante}
-                                            </span>
-                                          </p>
-                                          <p>
-                                            Precio Unitario:{" "}
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {formatearPresupuesto(
-                                                parseFloat(
-                                                  inversor.precioUnitario
-                                                )
-                                              )}
-                                            </span>
-                                          </p>
-                                          <p>
-                                            IGV:{" "}
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {formatearPresupuesto(
-                                                parseFloat(inversor.igv)
-                                              )}
-                                            </span>
-                                          </p>
-                                          <p>
-                                            Precio Base:
-                                            <span
-                                              css={css`
-                                                font-weight: bold;
-                                              `}
-                                            >
-                                              {""}{" "}
-                                              {formatearPresupuesto(
-                                                parseFloat(inversor.base)
-                                              )}
-                                            </span>
-                                          </p>
-
-                                          <Publicado>
-                                            Publicado hace :{" "}
-                                            {formatDistanceToNow(
-                                              new Date(inversor.fecha),
-                                              {
-                                                locale: es,
-                                              }
-                                            )}
-                                          </Publicado>
+                                        <div
+                                          className="contenedorPerfil"
+                                          css={css`
+                                            width: 20%;
+                                          `}
+                                        >
+                                          <img
+                                            src={
+                                              inversor.icono != null
+                                                ? inversor.icono
+                                                : "/static/img/imagenPerfil.png"
+                                            }
+                                          />
                                         </div>
                                         <div
                                           css={css`
+                                            margin-left: 10px;
                                             display: grid;
-                                            grid-template-columns: 1fr 2fr;
-
-                                            div {
+                                            width: 80%;
+                                            grid-template-columns: 1fr 1fr;
+                                            @media (max-width: 550px) {
                                               display: flex;
-                                              align-items: center;
-                                              justify-content: center;
                                               flex-direction: column;
-                                              gap: 5px;
-                                              div {
-                                                display: flex;
-                                                align-items: center;
-                                                padding: 8px;
-                                                border-radius: 6px;
-                                                background-color: var(
-                                                  --contBoton
-                                                );
-                                              }
                                             }
                                           `}
                                         >
                                           <div>
-                                            <div>
-                                              <i class="bx bx-cube"></i>
+                                            <p>
+                                              Titular:
                                               <span
                                                 css={css`
                                                   font-weight: bold;
-                                                  @media (max-width: 550px) {
-                                                    font-size: 10px;
-                                                  }
                                                 `}
                                               >
-                                                {inversor.cubos}
+                                                {""} {inversor.usuarioNombre}
                                               </span>
-                                            </div>
-                                          </div>
-                                          <div>
-                                            <div>
-                                              <i class="bx bx-money-withdraw"></i>
+                                            </p>
+                                            <p>
+                                              Inversor:
                                               <span
                                                 css={css`
                                                   font-weight: bold;
-                                                  @media (max-width: 550px) {
-                                                    font-size: 10px;
-                                                  }
+                                                `}
+                                              >
+                                                {""} {inversor.nombreInversor}
+                                              </span>
+                                            </p>
+
+                                            <p>
+                                              Descripción:
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {""} {inversor.descripcion}
+                                              </span>
+                                            </p>
+
+                                            <p>
+                                              Categoria:
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {""} {inversor.categoria}
+                                              </span>
+                                            </p>
+                                            <p>
+                                              Comprobante:
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {""} {inversor.comprobante}
+                                              </span>
+                                            </p>
+                                            <p>
+                                              Precio Unitario:{" "}
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {formatearPresupuesto(
+                                                  parseFloat(
+                                                    inversor.precioUnitario
+                                                  )
+                                                )}
+                                              </span>
+                                            </p>
+                                            <p>
+                                              IGV:{" "}
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
+                                                `}
+                                              >
+                                                {formatearPresupuesto(
+                                                  parseFloat(inversor.igv)
+                                                )}
+                                              </span>
+                                            </p>
+                                            <p>
+                                              Precio Base:
+                                              <span
+                                                css={css`
+                                                  font-weight: bold;
                                                 `}
                                               >
                                                 {""}{" "}
                                                 {formatearPresupuesto(
-                                                  parseFloat(inversor.parcial)
+                                                  parseFloat(inversor.base)
                                                 )}
                                               </span>
+                                            </p>
+
+                                            <Publicado>
+                                              Publicado hace :{" "}
+                                              {formatDistanceToNow(
+                                                new Date(inversor.fecha),
+                                                {
+                                                  locale: es,
+                                                }
+                                              )}
+                                            </Publicado>
+                                          </div>
+                                          <div
+                                            css={css`
+                                              display: grid;
+                                              grid-template-columns: 1fr 2fr;
+
+                                              div {
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                flex-direction: column;
+                                                gap: 5px;
+                                                div {
+                                                  display: flex;
+                                                  align-items: center;
+                                                  padding: 8px;
+                                                  border-radius: 6px;
+                                                  background-color: var(
+                                                    --contBoton
+                                                  );
+                                                }
+                                              }
+                                            `}
+                                          >
+                                            <div>
+                                              <div>
+                                                <i class="bx bx-cube"></i>
+                                                <span
+                                                  css={css`
+                                                    font-weight: bold;
+                                                    @media (max-width: 550px) {
+                                                      font-size: 10px;
+                                                    }
+                                                  `}
+                                                >
+                                                  {inversor.cubos}
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div>
+                                              <div>
+                                                <i class="bx bx-money-withdraw"></i>
+                                                <span
+                                                  css={css`
+                                                    font-weight: bold;
+                                                    @media (max-width: 550px) {
+                                                      font-size: 10px;
+                                                    }
+                                                  `}
+                                                >
+                                                  {""}{" "}
+                                                  {formatearPresupuesto(
+                                                    parseFloat(inversor.parcial)
+                                                  )}
+                                                </span>
+                                              </div>
                                             </div>
                                           </div>
                                         </div>
                                       </div>
+                                      <ContenedorImagenes>
+                                        <div
+                                          css={css`
+                                            border-right: solid white 1px;
+                                          `}
+                                        >
+                                          <div className="tituloEntrada">
+                                            Comprobante
+                                          </div>
+                                          <div className="tipoImagen">
+                                            {TipoArchivo(
+                                              inversor.imagenComprobante
+                                            ) != "pdf" ? (
+                                              <img
+                                                id="imagenComprobante"
+                                                src={inversor.imagenComprobante}
+                                                style={{
+                                                  width: "98%",
+                                                  height: "150px",
+                                                }}
+                                              />
+                                            ) : (
+                                              <iframe
+                                                id="imagenComprobante"
+                                                src={inversor.imagenComprobante}
+                                                style={{
+                                                  width: "100%",
+                                                  height: "150px",
+                                                }}
+                                              />
+                                            )}
+
+                                            <button
+                                              id="imagenComprobante"
+                                              onClick={Expandir}
+                                              css={css`
+                                                height: 30px;
+                                              `}
+                                            >
+                                              EXPANDIR
+                                            </button>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <div className="tituloEntrada">
+                                            DEPOSITO
+                                          </div>
+                                          <div
+                                            className="tipoImagen"
+                                            id="imagenContenedor"
+                                          >
+                                            {TipoArchivo(
+                                              inversor.imagenDeposito
+                                            ) != "pdf" ? (
+                                              <img
+                                                id="imagenComprobante"
+                                                src={inversor.imagenDeposito}
+                                                style={{
+                                                  width: "98%",
+                                                  height: "150px",
+                                                }}
+                                              />
+                                            ) : (
+                                              <iframe
+                                                id="imagenComprobante"
+                                                src={inversor.imagenDeposito}
+                                                style={{
+                                                  width: "100%",
+                                                  height: "150px",
+                                                }}
+                                              />
+                                            )}
+                                            <button
+                                              id="pdfViewer"
+                                              onClick={Expandir}
+                                              css={css`
+                                                height: 30px;
+                                              `}
+                                            >
+                                              EXPANDIR
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </ContenedorImagenes>
                                     </ListaComentario>
                                   </SwipeableListItem>
                                 </SwipeableList>
@@ -1987,183 +2144,283 @@ const Producto = () => {
                                       Tu inversion
                                     </div>
                                   )}
-                                  <div className="contenedorPerfil">
-                                    <img
-                                      src={
-                                        inversor.icono != null
-                                          ? inversor.icono
-                                          : "/static/img/imagenPerfil.png"
-                                      }
-                                    />
-                                  </div>
                                   <div
                                     css={css`
-                                      margin-left: 10px;
-                                      display: grid;
-                                      grid-template-columns: 1fr 1fr;
-                                      @media (max-width: 550px) {
-                                        display: flex;
-                                        flex-direction: column;
-                                        font-size: 10px;
-                                      }
+                                      display: flex;
+                                      width: 100%;
                                     `}
                                   >
-                                    <div>
-                                      <p>
-                                        Titular:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.usuarioNombre}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Inversor:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.nombreInversor}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Descripción:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.descripcion}
-                                        </span>
-                                      </p>
-
-                                      <p>
-                                        Categoria:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.categoria}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Comprobante:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""} {inversor.comprobante}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Precio Unitario:{" "}
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {formatearPresupuesto(
-                                            parseFloat(inversor.precioUnitario)
-                                          )}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        IGV:{" "}
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {formatearPresupuesto(
-                                            parseFloat(inversor.igv)
-                                          )}
-                                        </span>
-                                      </p>
-                                      <p>
-                                        Precio Base:
-                                        <span
-                                          css={css`
-                                            font-weight: bold;
-                                          `}
-                                        >
-                                          {""}{" "}
-                                          {formatearPresupuesto(
-                                            parseFloat(inversor.base)
-                                          )}
-                                        </span>
-                                      </p>
-                                      <Publicado>
-                                        Publicado hace :{" "}
-                                        {formatDistanceToNow(
-                                          new Date(inversor.fecha),
-                                          {
-                                            locale: es,
-                                          }
-                                        )}
-                                      </Publicado>
+                                    <div
+                                      className="contenedorPerfil"
+                                      css={css`
+                                        width: 20%;
+                                      `}
+                                    >
+                                      <img
+                                        src={
+                                          inversor.icono != null
+                                            ? inversor.icono
+                                            : "/static/img/imagenPerfil.png"
+                                        }
+                                      />
                                     </div>
                                     <div
                                       css={css`
+                                        margin-left: 10px;
+                                        width: 80%;
                                         display: grid;
-                                        grid-template-columns: 1fr 2fr;
-                                        gap: 10px;
-
-                                        div {
+                                        grid-template-columns: 1fr 1fr;
+                                        @media (max-width: 550px) {
                                           display: flex;
-                                          align-items: center;
-                                          justify-content: center;
                                           flex-direction: column;
-                                          gap: 5px;
-                                          div {
-                                            display: flex;
-                                            align-items: center;
-                                            padding: 8px;
-                                            border-radius: 6px;
-                                            background-color: var(--contBoton);
-                                          }
+                                          font-size: 10px;
                                         }
                                       `}
                                     >
                                       <div>
-                                        <div>
-                                          <i class="bx bx-cube"></i>
+                                        <p>
+                                          Titular:
                                           <span
                                             css={css`
                                               font-weight: bold;
-                                              @media (max-width: 550px) {
-                                                font-size: 10px;
-                                              }
                                             `}
                                           >
-                                            {inversor.cubos}
+                                            {""} {inversor.usuarioNombre}
                                           </span>
-                                        </div>
-                                      </div>
-                                      <div>
-                                        <div>
-                                          <i class="bx bx-money-withdraw"></i>
+                                        </p>
+                                        <p>
+                                          Inversor:
                                           <span
                                             css={css`
                                               font-weight: bold;
-                                              @media (max-width: 550px) {
-                                                font-size: 10px;
-                                              }
+                                            `}
+                                          >
+                                            {""} {inversor.nombreInversor}
+                                          </span>
+                                        </p>
+                                        <p>
+                                          Descripción:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""} {inversor.descripcion}
+                                          </span>
+                                        </p>
+
+                                        <p>
+                                          Categoria:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""} {inversor.categoria}
+                                          </span>
+                                        </p>
+                                        <p>
+                                          Comprobante:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {""} {inversor.comprobante}
+                                          </span>
+                                        </p>
+                                        <p>
+                                          Precio Unitario:{" "}
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {formatearPresupuesto(
+                                              parseFloat(
+                                                inversor.precioUnitario
+                                              )
+                                            )}
+                                          </span>
+                                        </p>
+                                        <p>
+                                          IGV:{" "}
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
+                                            `}
+                                          >
+                                            {formatearPresupuesto(
+                                              parseFloat(inversor.igv)
+                                            )}
+                                          </span>
+                                        </p>
+                                        <p>
+                                          Precio Base:
+                                          <span
+                                            css={css`
+                                              font-weight: bold;
                                             `}
                                           >
                                             {""}{" "}
                                             {formatearPresupuesto(
-                                              parseFloat(inversor.parcial)
+                                              parseFloat(inversor.base)
                                             )}
                                           </span>
+                                        </p>
+                                        <Publicado>
+                                          Publicado hace :{" "}
+                                          {formatDistanceToNow(
+                                            new Date(inversor.fecha),
+                                            {
+                                              locale: es,
+                                            }
+                                          )}
+                                        </Publicado>
+                                      </div>
+                                      <div
+                                        css={css`
+                                          display: grid;
+                                          grid-template-columns: 1fr 2fr;
+                                          gap: 10px;
+
+                                          div {
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            flex-direction: column;
+                                            gap: 5px;
+                                            div {
+                                              display: flex;
+                                              align-items: center;
+                                              padding: 8px;
+                                              border-radius: 6px;
+                                              background-color: var(
+                                                --contBoton
+                                              );
+                                            }
+                                          }
+                                        `}
+                                      >
+                                        <div>
+                                          <div>
+                                            <i class="bx bx-cube"></i>
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                                @media (max-width: 550px) {
+                                                  font-size: 10px;
+                                                }
+                                              `}
+                                            >
+                                              {inversor.cubos}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <div>
+                                            <i class="bx bx-money-withdraw"></i>
+                                            <span
+                                              css={css`
+                                                font-weight: bold;
+                                                @media (max-width: 550px) {
+                                                  font-size: 10px;
+                                                }
+                                              `}
+                                            >
+                                              {""}{" "}
+                                              {formatearPresupuesto(
+                                                parseFloat(inversor.parcial)
+                                              )}
+                                            </span>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
+                                  <ContenedorImagenes>
+                                    <div
+                                      css={css`
+                                        border-right: solid white 1px;
+                                      `}
+                                    >
+                                      <div className="tituloEntrada">
+                                        Comprobante
+                                      </div>
+                                      <div className="tipoImagen">
+                                        {TipoArchivo(
+                                          inversor.imagenComprobante
+                                        ) != "pdf" ? (
+                                          <img
+                                            id="imagenComprobante"
+                                            src={inversor.imagenComprobante}
+                                            style={{
+                                              width: "98%",
+                                              height: "150px",
+                                            }}
+                                          />
+                                        ) : (
+                                          <iframe
+                                            id="imagenComprobante"
+                                            src={inversor.imagenComprobante}
+                                            style={{
+                                              width: "100%",
+                                              height: "150px",
+                                            }}
+                                          />
+                                        )}
+
+                                        <button
+                                          id="imagenComprobante"
+                                          onClick={Expandir}
+                                          css={css`
+                                            height: 30px;
+                                          `}
+                                        >
+                                          EXPANDIR
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div className="tituloEntrada">
+                                        DEPOSITO
+                                      </div>
+                                      <div
+                                        className="tipoImagen"
+                                        id="imagenContenedor"
+                                      >
+                                        {TipoArchivo(inversor.imagenDeposito) !=
+                                        "pdf" ? (
+                                          <img
+                                            id="imagenComprobante"
+                                            src={inversor.imagenDeposito}
+                                            style={{
+                                              width: "98%",
+                                              height: "150px",
+                                            }}
+                                          />
+                                        ) : (
+                                          <iframe
+                                            id="imagenComprobante"
+                                            src={inversor.imagenDeposito}
+                                            style={{
+                                              width: "100%",
+                                              height: "150px",
+                                            }}
+                                          />
+                                        )}
+                                        <button
+                                          id="pdfViewer"
+                                          onClick={Expandir}
+                                          css={css`
+                                            height: 30px;
+                                          `}
+                                        >
+                                          EXPANDIR
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </ContenedorImagenes>
                                 </ListaComentario>
                               )}
                             </div>
