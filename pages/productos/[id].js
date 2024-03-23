@@ -463,6 +463,8 @@ const Producto = () => {
   const [uploading, setUploading] = useState(false);
   const [imagenComprobante, setImagenComprobante] = useState("");
   const [imagenDeposito, setImagenDeposito] = useState("");
+  //Precio Buscado
+  const [totalGasto, setTotalGasto] = useState(0);
   //routing para obtener el id actual
   const router = useRouter();
   const {
@@ -631,6 +633,20 @@ const Producto = () => {
     };
     sumaTotal();
   }, [producto, numElementos, totalCubos]);
+  useEffect(() => {
+    let suma = 0;
+    const sumaTotal = async () => {
+      if (gastosFiltrados) {
+        gastosFiltrados.map((inversor) => {
+          suma = suma + parseFloat(inversor.parcial);
+        });
+        await setTotalGasto(suma);
+      } else {
+        suma = 0;
+      }
+    };
+    sumaTotal();
+  }, [producto, filtro]);
 
   if (Object.keys(producto).length === 0 && !error) return <SpinnerPrincipal />;
 
@@ -1164,14 +1180,16 @@ const Producto = () => {
     setFiltro(event.target.value);
   };
 
-  const gastosFiltrados = inversores.filter(
-    (gasto) =>
-      gasto.descripcion.toLowerCase().includes(filtro.toLowerCase()) ||
-      gasto.categoria.toLowerCase().includes(filtro.toLowerCase()) ||
-      gasto.comprobante.toLowerCase().includes(filtro.toLowerCase()) ||
-      gasto.nombreInversor.toLowerCase().includes(filtro.toLowerCase()) ||
-      gasto.usuarioNombre.toLowerCase().includes(filtro.toLowerCase())
-  );
+  const gastosFiltrados = filtro
+    ? inversores.filter(
+        (gasto) =>
+          gasto.descripcion.toLowerCase().includes(filtro.toLowerCase()) ||
+          gasto.categoria.toLowerCase().includes(filtro.toLowerCase()) ||
+          gasto.comprobante.toLowerCase().includes(filtro.toLowerCase()) ||
+          gasto.nombreInversor.toLowerCase().includes(filtro.toLowerCase()) ||
+          gasto.usuarioNombre.toLowerCase().includes(filtro.toLowerCase())
+      )
+    : inversores;
 
   return (
     <Layout>
@@ -1698,7 +1716,12 @@ const Producto = () => {
                     <img src="/static/img/ruta.png" />
                     <span>Visitar Web</span>
                   </a>
-                  <div className="votarUsuario">
+                  <div
+                    className="votarUsuario"
+                    css={css`
+                      padding: 10px;
+                    `}
+                  >
                     <div className="cantVotos">
                       <i className="bx bx-heart"></i>
                       <p>{votos}</p>
@@ -1815,6 +1838,17 @@ const Producto = () => {
                           `}
                         ></i>
                       </div>
+                      {/* ACUMULADO GASTOS FILTRADOS */}
+                      {filtro != "" && (
+                        <Precio
+                          css={css`
+                            text-align: start;
+                          `}
+                        >
+                          <span>Invertido: </span>{" "}
+                          {formatearPresupuesto(parseFloat(totalGasto))}
+                        </Precio>
+                      )}
 
                       <ul
                         css={css`
