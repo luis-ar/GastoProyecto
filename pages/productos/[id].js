@@ -467,6 +467,31 @@ const Producto = () => {
   const [totalGasto, setTotalGasto] = useState(0);
   //routing para obtener el id actual
   const router = useRouter();
+  //tipo datos
+
+  const [montoBoleta, setMontoBoleta] = useState(0);
+  const [montoFactura, setMontoFactura] = useState(0);
+
+  const [montoObras, setMontoObras] = useState(0);
+  const [montoEstructura, setmontoEstructura] = useState(0);
+  const [montoArqui, setMontoArqui] = useState(0);
+  const [montoInstaSani, setMontoInstaSani] = useState(0);
+  const [montoInstaElec, setMontoInstaElec] = useState(0);
+  const [montoGastos, setMontoGastos] = useState(0);
+
+  //   0bras Provicionales y Estructurales">
+  //   0bras Provicionales y Estructurales
+  // </option>
+  // <option value="Estructuras">Estructuras</option>
+  // <option value="Arquitectura">Arquitectura</option>
+  // <option value="Instalaciones Sanitarias">
+  //   Instalaciones Sanitarias
+  // </option>
+  // <option value="Instalaciones Electricas y Mecanicas">
+  //   Instalaciones Electricas y Mecanicas
+  // </option>
+  // <option value="Gastos Generales
+
   const {
     query: { id },
   } = router;
@@ -647,6 +672,52 @@ const Producto = () => {
     };
     sumaTotal();
   }, [producto, filtro]);
+  useEffect(() => {
+    let suma = 0;
+    let suma2 = 0;
+    let suma3 = 0;
+    let suma4 = 0;
+    let suma5 = 0;
+    let suma6 = 0;
+    let suma7 = 0;
+    let suma8 = 0;
+    const sumaTotal = async () => {
+      if (inversores) {
+        inversores.map(async (inversor) => {
+          if (inversor.comprobante == "Boleta") {
+            suma += parseFloat(inversor.parcial);
+          } else {
+            suma2 += parseFloat(inversor.parcial);
+          }
+          if (inversor.categoria == "0bras Provicionales y Estructurales") {
+            suma3 += parseFloat(inversor.parcial);
+          } else if (inversor.categoria == "Estructuras") {
+            suma4 += parseFloat(inversor.parcial);
+          } else if (inversor.categoria == "Arquitectura") {
+            suma5 += parseFloat(inversor.parcial);
+          } else if (inversor.categoria == "Instalaciones Sanitarias") {
+            suma6 += parseFloat(inversor.parcial);
+          } else if (
+            inversor.categoria == "Instalaciones Electricas y Mecanicas"
+          ) {
+            suma7 += parseFloat(inversor.parcial);
+          } else {
+            suma8 += parseFloat(inversor.parcial);
+          }
+
+          await setMontoBoleta(suma);
+          await setMontoFactura(suma2);
+          await setMontoObras(suma3);
+          await setmontoEstructura(suma4);
+          await setMontoArqui(suma5);
+          await setMontoInstaSani(suma6);
+          await setMontoInstaElec(suma7);
+          await setMontoGastos(suma8);
+        });
+      }
+    };
+    sumaTotal();
+  }, [producto]);
 
   if (Object.keys(producto).length === 0 && !error) return <SpinnerPrincipal />;
 
@@ -1326,6 +1397,7 @@ const Producto = () => {
                       onChange={inversorCategoriaChange}
                     >
                       <option value="">-- Seleccione --</option>
+
                       <option value="0bras Provicionales y Estructurales">
                         0bras Provicionales y Estructurales
                       </option>
@@ -1798,6 +1870,83 @@ const Producto = () => {
                         <span>Gastado: </span>{" "}
                         {formatearPresupuesto(parseFloat(totalCubos))}
                       </Precio>
+                      <table
+                        border="1"
+                        cellspacing="0"
+                        cellpadding="5"
+                        css={css`
+                          width: 100%;
+                          text-align: center;
+                          margin-bottom: 25px;
+
+                          th {
+                            width: 50%;
+                          }
+                        `}
+                      >
+                        <thead>
+                          <tr>
+                            <th>Comprobante</th>
+                            <th>Monto</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Boleta</td>
+                            <td>{formatearPresupuesto(montoBoleta)}</td>
+                          </tr>
+                          <tr>
+                            <td>Factura</td>
+                            <td>{formatearPresupuesto(montoFactura)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <table
+                        border="1"
+                        cellspacing="0"
+                        cellpadding="5"
+                        css={css`
+                          width: 100%;
+                          text-align: center;
+                          margin-bottom: 15px;
+                          th {
+                            width: 50%;
+                          }
+                        `}
+                      >
+                        <thead>
+                          <tr>
+                            <th>Comprobante</th>
+                            <th>Monto</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>0bras Provicionales y Estructurales</td>
+                            <td>{formatearPresupuesto(montoObras)}</td>
+                          </tr>
+                          <tr>
+                            <td>Estructuras</td>
+                            <td>{formatearPresupuesto(montoEstructura)}</td>
+                          </tr>
+                          <tr>
+                            <td>Arquitectura</td>
+                            <td>{formatearPresupuesto(montoArqui)}</td>
+                          </tr>
+                          <tr>
+                            <td>Instalaciones Sanitarias</td>
+                            <td>{formatearPresupuesto(montoInstaSani)}</td>
+                          </tr>
+                          <tr>
+                            <td>Instalaciones Electricas y Mecanicas</td>
+                            <td>{formatearPresupuesto(montoInstaElec)}</td>
+                          </tr>
+                          <tr>
+                            <td>Gastos Generales</td>
+                            <td>{formatearPresupuesto(montoGastos)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                       <p
                         css={css`
                           font-weight: bold;
